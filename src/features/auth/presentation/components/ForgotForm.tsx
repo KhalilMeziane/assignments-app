@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form"
 import useStep from "@/hooks/useStep"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
+import ErrorAlert from "@/components/ErrorAlert"
 import { InputField, OTPField } from "@/components/fields"
 
+import { useRequestOtp, useResetPassword, useVerifyOtp } from "../hooks"
 import {
   ForgotSchemaEmailStep,
   ForgotSchemaOtpStep,
@@ -28,6 +30,7 @@ export default function ForgotForm() {
 }
 
 const EmailStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
+  const { mutateAsync, isPending, isError, error } = useRequestOtp()
   const form = useForm<ForgotValuesEmailStep>({
     resolver: zodResolver(ForgotSchemaEmailStep),
     defaultValues: {
@@ -35,12 +38,13 @@ const EmailStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
     },
   })
 
-  const handelSubmit = (values: ForgotValuesEmailStep) => {
-    console.log(values)
+  const handelSubmit = async (values: ForgotValuesEmailStep) => {
+    await mutateAsync(values)
     goToNextStep()
   }
   return (
     <Form {...form}>
+      {isError ? <ErrorAlert error={error} /> : null}
       <form onSubmit={form.handleSubmit(handelSubmit)} className="space-y-4">
         <InputField
           label="Email"
@@ -49,7 +53,7 @@ const EmailStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
           form={form}
           placeholder="john@doe.com"
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           Send
         </Button>
       </form>
@@ -58,6 +62,7 @@ const EmailStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
 }
 
 const OTPStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
+  const { mutateAsync, isPending, isError, error } = useVerifyOtp()
   const form = useForm<ForgotValuesOtpStep>({
     resolver: zodResolver(ForgotSchemaOtpStep),
     defaultValues: {
@@ -65,15 +70,16 @@ const OTPStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
     },
   })
 
-  const handelSubmit = (values: ForgotValuesOtpStep) => {
-    console.log(values)
+  const handelSubmit = async (values: ForgotValuesOtpStep) => {
+    await mutateAsync({ ...values, email: "" })
     goToNextStep()
   }
   return (
     <Form {...form}>
+      {isError ? <ErrorAlert error={error} /> : null}
       <form onSubmit={form.handleSubmit(handelSubmit)} className="space-y-4">
         <OTPField label="OTP" name="otp" form={form} />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           Send
         </Button>
       </form>
@@ -82,6 +88,8 @@ const OTPStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
 }
 
 const ResetPasswordStep = () => {
+  const { mutateAsync, isPending, isError, error } = useResetPassword()
+
   const form = useForm<ForgotValuesPasswordsStep>({
     resolver: zodResolver(ForgotSchemaPasswordsStep),
     defaultValues: {
@@ -90,11 +98,13 @@ const ResetPasswordStep = () => {
     },
   })
 
-  const handelSubmit = (values: ForgotValuesPasswordsStep) => {
-    console.log(values)
+  const handelSubmit = async (values: ForgotValuesPasswordsStep) => {
+    await mutateAsync({ newPassword: values.newPassword, token: "" })
   }
+
   return (
     <Form {...form}>
+      {isError ? <ErrorAlert error={error} /> : null}
       <form onSubmit={form.handleSubmit(handelSubmit)} className="space-y-4">
         <InputField
           label="New Password"
@@ -110,7 +120,7 @@ const ResetPasswordStep = () => {
           form={form}
           placeholder="********"
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           Submit
         </Button>
       </form>

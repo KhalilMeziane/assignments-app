@@ -3,11 +3,14 @@ import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
+import ErrorAlert from "@/components/ErrorAlert"
 import { InputField } from "@/components/fields"
 
+import { useRegister } from "../hooks"
 import { SignupSchema, SignupValues } from "../validators"
 
 export default function RegisterForm() {
+  const { mutateAsync, isPending, isError, error } = useRegister()
   const form = useForm<SignupValues>({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
@@ -17,11 +20,12 @@ export default function RegisterForm() {
     },
   })
 
-  const handelSubmit = (values: SignupValues) => {
-    console.log(values)
+  const handelSubmit = async (values: SignupValues) => {
+    await mutateAsync(values)
   }
   return (
     <Form {...form}>
+      {isError ? <ErrorAlert error={error} /> : null}
       <form onSubmit={form.handleSubmit(handelSubmit)} className="space-y-4">
         <InputField
           label="Email"
@@ -44,7 +48,7 @@ export default function RegisterForm() {
           form={form}
           placeholder="********"
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           Submit
         </Button>
       </form>

@@ -4,11 +4,14 @@ import { Link } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
+import ErrorAlert from "@/components/ErrorAlert"
 import { InputField } from "@/components/fields"
 
+import { useLogin } from "../hooks"
 import { LoginSchema, LoginValues } from "../validators"
 
 export default function LoginForm() {
+  const { mutateAsync, isPending, isError, error } = useLogin()
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -17,12 +20,13 @@ export default function LoginForm() {
     },
   })
 
-  const handelSubmit = (values: LoginValues) => {
-    console.log(values)
+  const handelSubmit = async (values: LoginValues) => {
+    await mutateAsync(values)
   }
 
   return (
     <Form {...form}>
+      {isError ? <ErrorAlert error={error} /> : null}
       <form onSubmit={form.handleSubmit(handelSubmit)} className="space-y-4">
         <InputField
           label="Email"
@@ -41,7 +45,7 @@ export default function LoginForm() {
         <Link className="text-blue-600 text-sm" to="/forgot-password">
           Forgot password?
         </Link>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           Submit
         </Button>
       </form>
