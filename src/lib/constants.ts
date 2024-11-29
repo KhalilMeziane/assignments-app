@@ -1,1 +1,1 @@
-export const BrandName = 'Attraxia'
+export const BrandName = 'Assessment'
