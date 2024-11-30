@@ -1,8 +1,16 @@
 import { Calendar, ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
+import { parseAsInteger, parseAsNumberLiteral, useQueryState } from "nuqs"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import ErrorBlock from "@/components/ErrorBlock"
 import Loading from "@/components/Loading"
 import { Modal } from "@/components/Modal"
@@ -80,16 +88,62 @@ const Item = () => {
   )
 }
 
-const Pagination = () => {
+const Pagination = ({ pageCount = 5 }: { pageCount?: number }) => {
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
+  const handelPageNext = () => {
+    setPage(page + 1)
+  }
+  const handelPagePrev = () => {
+    setPage(page - 1)
+  }
+
   return (
-    <div className="flex justify-center items-center gap-2 py-1">
-      <Button size="icon">
-        <ChevronLeft />
-      </Button>
-      <p className="bg-white p-2 rounded-md font-medium">1 of 5</p>
-      <Button size="icon">
-        <ChevronRight />
-      </Button>
+    <div className="flex justify-between">
+      <div className="flex items-center gap-2 py-1">
+        <Button size="icon" onClick={handelPagePrev} disabled={page === 1}>
+          <ChevronLeft />
+        </Button>
+        <p className="bg-white p-2 rounded-md font-medium">
+          {page} of {pageCount}
+        </p>
+        <Button
+          size="icon"
+          onClick={handelPageNext}
+          disabled={page === pageCount}
+        >
+          <ChevronRight />
+        </Button>
+      </div>
+      <div>
+        <Limit />
+      </div>
     </div>
+  )
+}
+
+const Limit = () => {
+  const limitWhiteList = [10, 20, 30] as const
+  const [limit, setLimit] = useQueryState(
+    "limit",
+    parseAsNumberLiteral(limitWhiteList).withDefault(10)
+  )
+
+  const handelStatus = (value: (typeof limitWhiteList)[number]) => {
+    setLimit(value)
+  }
+  return (
+    <Select
+      onValueChange={(val: string) => handelStatus(Number(val) as 10 | 20 | 30)}
+      defaultValue={limit.toString()}
+    >
+      <SelectTrigger className="w-[180px] bg-white">
+        <SelectValue placeholder="Select Limit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="10">10</SelectItem>
+        <SelectItem value="20">20</SelectItem>
+        <SelectItem value="30">30</SelectItem>
+      </SelectContent>
+    </Select>
   )
 }

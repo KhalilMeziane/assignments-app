@@ -1,5 +1,6 @@
 import { Home } from "@/features/assignment/presentation/pages"
 import { Forgot, Login, Register } from "@/features/auth/presentation/pages"
+import { NuqsAdapter } from "nuqs/adapters/react-router"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 const router = createBrowserRouter([
@@ -22,5 +23,9 @@ const router = createBrowserRouter([
 ])
 
 export function Router() {
-  return <RouterProvider router={router} />
+  return (
+    <NuqsAdapter>
+      <RouterProvider router={router} />
+    </NuqsAdapter>
+  )
 }
