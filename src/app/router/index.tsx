@@ -1,3 +1,4 @@
+import { Home } from "@/features/assignment/presentation/pages"
 import { Forgot, Login, Register } from "@/features/auth/presentation/pages"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     element: <Forgot />,
     path: "/forgot-password",
+  },
+  {
+    element: <Home />,
+    path: "/home",
   },
 ])
 

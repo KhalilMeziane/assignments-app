@@ -1,9 +1,14 @@
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { CloudAlert } from "lucide-react"
+
+import { Alert, AlertTitle } from "@/components/ui/alert"
 
 export default function ErrorAlert({ error }: { error: Error }) {
   return (
-    <Alert variant="destructive" className="my-2">
-      <AlertDescription>{error.message}</AlertDescription>
+    <Alert variant="destructive">
+      <AlertTitle className="flex items-center gap-2">
+        <CloudAlert className="size-5" />
+        {error.message}
+      </AlertTitle>
     </Alert>
   )
 }
