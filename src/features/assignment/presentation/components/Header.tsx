@@ -18,7 +18,7 @@ import CreateForm from "./forms/Create"
 export default function Header() {
   return (
     <header className="py-4">
-      <h1 className="font-medium text-xl">Assignment Dashboard</h1>
+      <h1 className="font-medium text-xl">Assignments List</h1>
       <div className="mt-2 flex justify-between">
         <div className="flex gap-2">
           <Search />

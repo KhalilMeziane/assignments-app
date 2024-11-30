@@ -1,4 +1,11 @@
-import { Calendar, ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Eye,
+  Trash2,
+} from "lucide-react"
 import { parseAsInteger, parseAsNumberLiteral, useQueryState } from "nuqs"
 
 import { cn } from "@/lib/utils"
@@ -18,6 +25,7 @@ import { Modal } from "@/components/Modal"
 import { useGetAssignments } from "../hooks"
 import DeleteForm from "./forms/Delete"
 import EditForm from "./forms/Edit"
+import View from "./View"
 
 export default function List() {
   const { data, isLoading, isError, error } = useGetAssignments()
@@ -56,7 +64,7 @@ const Item = () => {
           <Modal
             title="Delete Assignment"
             CButton={
-              <Button size="icon" variant="outline">
+              <Button size="icon" variant="ghost">
                 <Trash2 className="size-4" />
               </Button>
             }
@@ -67,12 +75,23 @@ const Item = () => {
           <Modal
             title="Update Assignment"
             CButton={
-              <Button size="icon" variant="default">
+              <Button size="icon" variant="outline">
                 <Edit className="size-4" />
               </Button>
             }
             render={({ onClose }) => {
               return <EditForm onClose={onClose} />
+            }}
+          />
+          <Modal
+            title="View Assignment"
+            CButton={
+              <Button size="icon" variant="default">
+                <Eye className="size-4" />
+              </Button>
+            }
+            render={({ onClose }) => {
+              return <View onClose={onClose} />
             }}
           />
         </div>
