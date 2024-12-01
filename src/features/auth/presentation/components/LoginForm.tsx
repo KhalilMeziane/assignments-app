@@ -1,4 +1,4 @@
-import { setAuth } from "@/app/store/reducers/authReducer"
+import { setAuth } from "@/features/auth/application/authSlice"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Cookies from "js-cookie"
 import { useForm } from "react-hook-form"

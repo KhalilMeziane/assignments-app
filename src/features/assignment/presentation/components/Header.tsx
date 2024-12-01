@@ -1,6 +1,6 @@
 import { RootState } from "@/app/store"
-import { clearAuth } from "@/app/store/reducers/authReducer"
 import placeholder from "@/assets/user-placeholder.jpg"
+import { clearAuth } from "@/features/auth/application/authSlice"
 import { useLogout } from "@/features/auth/presentation/hooks"
 import Cookies from "js-cookie"
 import { ArrowDownNarrowWide, ArrowUpNarrowWide, LogOut } from "lucide-react"
