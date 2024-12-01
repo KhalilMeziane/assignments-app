@@ -3,12 +3,16 @@ import { Forgot, Login, Register } from "@/features/auth/presentation/pages"
 import { NuqsAdapter } from "nuqs/adapters/react-router"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
+import ErrorBoundary from "@/components/ErrorBoundary"
+import NotFound from "@/components/NotFound"
+
 import ProtectedRoute from "./ProtectedRoute"
 import PublicRoute from "./PublicRoute"
 
 const router = createBrowserRouter([
   {
     element: <PublicRoute />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         element: <Login />,
@@ -26,6 +30,7 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         element: <Home />,
@@ -35,7 +40,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <p>NotFound</p>,
+    element: <NotFound />,
   },
 ])
 
