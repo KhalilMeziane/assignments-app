@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import Cookies from "js-cookie"
 import { useForm } from "react-hook-form"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
@@ -11,6 +12,7 @@ import { useLogin } from "../hooks"
 import { LoginSchema, LoginValues } from "../validators"
 
 export default function LoginForm() {
+  const navigate = useNavigate()
   const { mutateAsync, isPending, isError, error } = useLogin()
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
@@ -21,7 +23,9 @@ export default function LoginForm() {
   })
 
   const handelSubmit = async (values: LoginValues) => {
-    await mutateAsync(values)
+    const response = await mutateAsync(values)
+    Cookies.set("accessToken", response?.accessToken || "")
+    navigate("/home")
   }
 
   return (

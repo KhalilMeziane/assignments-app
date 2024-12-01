@@ -5,7 +5,7 @@ let axiosInstance: Axios;
 export const HttpClient = () => {
   if (axiosInstance) return axiosInstance;
   axiosInstance = axios.create({
-    baseURL: 'localhost',
+    baseURL: 'http://localhost:5173/api',
   });
 
   axiosInstance.interceptors.response.use(response => response, error => {

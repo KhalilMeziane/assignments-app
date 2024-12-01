@@ -3,22 +3,39 @@ import { Forgot, Login, Register } from "@/features/auth/presentation/pages"
 import { NuqsAdapter } from "nuqs/adapters/react-router"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
+import ProtectedRoute from "./ProtectedRoute"
+import PublicRoute from "./PublicRoute"
+
 const router = createBrowserRouter([
   {
-    element: <Login />,
-    path: "/",
+    element: <PublicRoute />,
+    children: [
+      {
+        element: <Login />,
+        path: "/",
+      },
+      {
+        element: <Register />,
+        path: "/register",
+      },
+      {
+        element: <Forgot />,
+        path: "/forgot-password",
+      },
+    ],
   },
   {
-    element: <Register />,
-    path: "/register",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <Home />,
+        path: "/home",
+      },
+    ],
   },
   {
-    element: <Forgot />,
-    path: "/forgot-password",
-  },
-  {
-    element: <Home />,
-    path: "/home",
+    path: "*",
+    element: <p>NotFound</p>,
   },
 ])
 

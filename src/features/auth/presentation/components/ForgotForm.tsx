@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router-dom"
 
 import useStep from "@/hooks/useStep"
 import { Button } from "@/components/ui/button"
@@ -40,6 +41,7 @@ const EmailStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
 
   const handelSubmit = async (values: ForgotValuesEmailStep) => {
     await mutateAsync(values)
+    sessionStorage.setItem("email", values.email)
     goToNextStep()
   }
   return (
@@ -71,7 +73,10 @@ const OTPStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
   })
 
   const handelSubmit = async (values: ForgotValuesOtpStep) => {
-    await mutateAsync({ ...values, email: "" })
+    await mutateAsync({
+      otp: values.otp,
+      email: sessionStorage.getItem("email") || "",
+    })
     goToNextStep()
   }
   return (
@@ -88,6 +93,7 @@ const OTPStep = ({ goToNextStep }: { goToNextStep: () => void }) => {
 }
 
 const ResetPasswordStep = () => {
+  const navigate = useNavigate()
   const { mutateAsync, isPending, isError, error } = useResetPassword()
 
   const form = useForm<ForgotValuesPasswordsStep>({
@@ -99,7 +105,13 @@ const ResetPasswordStep = () => {
   })
 
   const handelSubmit = async (values: ForgotValuesPasswordsStep) => {
-    await mutateAsync({ newPassword: values.newPassword, token: "" })
+    await mutateAsync({
+      newPassword: values.newPassword,
+      resetKey: "my-key",
+      email: sessionStorage.getItem("email") || "",
+    })
+    sessionStorage.removeItem("email")
+    navigate("/")
   }
 
   return (

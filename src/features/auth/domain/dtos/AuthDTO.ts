@@ -7,7 +7,8 @@ export interface LoginDTO {
 
 export interface LoginResponseDTO {
   message: string
-  data: User
+  user: User,
+  accessToken: string
 }
 
 export interface RegisterDTO {
@@ -16,10 +17,7 @@ export interface RegisterDTO {
   password: string;
 }
 
-export interface RegisterResponseDTO {
-  message: string
-  data: User
-}
+export interface RegisterResponseDTO extends LoginResponseDTO { }
 
 export interface RequestOtpDTO {
   email: string;
@@ -40,7 +38,8 @@ export interface VerifyOtpResponseDTO {
 }
 
 export interface ResetPasswordDTO {
-  token: string;
+  resetKey: string;
+  email: string;
   newPassword: string;
 }
 

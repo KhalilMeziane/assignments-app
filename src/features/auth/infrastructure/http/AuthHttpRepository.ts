@@ -41,7 +41,7 @@ export class AuthHttpRepository implements AuthRepository {
   }
   async resetPassword(resetPasswordDTO: ResetPasswordDTO): Promise<ResetPasswordResponseDTO | null> {
     try {
-      const response = await HttpClient().post('/auth/verifyOtp', resetPasswordDTO)
+      const response = await HttpClient().post('/auth/reset-password', resetPasswordDTO)
       const data = response.data as ResetPasswordResponseDTO
       return data
     } catch (error) {
