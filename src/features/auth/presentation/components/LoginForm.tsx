@@ -1,6 +1,8 @@
+import { setAuth } from "@/app/store/reducers/authReducer"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Cookies from "js-cookie"
 import { useForm } from "react-hook-form"
+import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
@@ -12,6 +14,7 @@ import { useLogin } from "../hooks"
 import { LoginSchema, LoginValues } from "../validators"
 
 export default function LoginForm() {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { mutateAsync, isPending, isError, error } = useLogin()
   const form = useForm<LoginValues>({
@@ -24,6 +27,7 @@ export default function LoginForm() {
 
   const handelSubmit = async (values: LoginValues) => {
     const response = await mutateAsync(values)
+    dispatch(setAuth(response?.user))
     Cookies.set("accessToken", response?.accessToken || "")
     navigate("/home")
   }

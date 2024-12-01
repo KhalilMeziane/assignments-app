@@ -1,6 +1,8 @@
+import { setAuth } from "@/app/store/reducers/authReducer"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Cookies from "js-cookie"
 import { useForm } from "react-hook-form"
+import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
@@ -12,6 +14,7 @@ import { useRegister } from "../hooks"
 import { SignupSchema, SignupValues } from "../validators"
 
 export default function RegisterForm() {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { mutateAsync, isPending, isError, error } = useRegister()
   const form = useForm<SignupValues>({
@@ -25,9 +28,11 @@ export default function RegisterForm() {
 
   const handelSubmit = async (values: SignupValues) => {
     const response = await mutateAsync(values)
+    dispatch(setAuth(response?.user))
     Cookies.set("accessToken", response?.accessToken || "")
     navigate("/home")
   }
+
   return (
     <Form {...form}>
       {isError ? <ErrorAlert error={error} /> : null}

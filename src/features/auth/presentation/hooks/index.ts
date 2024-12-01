@@ -1,4 +1,4 @@
-import { useLoginMutation, useRequestOtpMutation, useVerifyOtpMutation, useRegisterMutation, useResetPasswordMutation } from "@/features/auth/application/authMutations"
+import { useLoginMutation, useRequestOtpMutation, useVerifyOtpMutation, useRegisterMutation, useResetPasswordMutation, useLogoutMutation } from "@/features/auth/application/authMutations"
 
 export const useLogin = () => {
   return useLoginMutation()
@@ -18,4 +18,8 @@ export const useVerifyOtp = () => {
 
 export const useResetPassword = () => {
   return useResetPasswordMutation()
+}
+
+export const useLogout = () => {
+  return useLogoutMutation()
 }

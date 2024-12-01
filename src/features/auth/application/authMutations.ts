@@ -47,3 +47,12 @@ export const useResetPasswordMutation = () => {
     },
   });
 }
+
+export const useLogoutMutation = () => {
+  return useMutation({
+    mutationKey: ['auth-logout'],
+    mutationFn: () => {
+      return new AuthHttpRepository().logout();
+    },
+  });
+}

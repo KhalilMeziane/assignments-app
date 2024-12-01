@@ -1,6 +1,6 @@
 import { AuthRepository } from "../../domain/repositories/AuthRepository";
 import { HttpClient } from "@/lib/httpClient";
-import { LoginDTO, LoginResponseDTO, RequestOtpResponseDTO, RequestOtpDTO, VerifyOtpResponseDTO, VerifyOtpDTO, RegisterDTO, RegisterResponseDTO, ResetPasswordDTO, ResetPasswordResponseDTO } from "../../domain/dtos/AuthDTO";
+import { LoginDTO, LoginResponseDTO, RequestOtpResponseDTO, RequestOtpDTO, VerifyOtpResponseDTO, VerifyOtpDTO, RegisterDTO, RegisterResponseDTO, ResetPasswordDTO, ResetPasswordResponseDTO, LogoutResponseDTO } from "../../domain/dtos/AuthDTO";
 
 export class AuthHttpRepository implements AuthRepository {
   async login(loginDTO: LoginDTO): Promise<LoginResponseDTO | null> {
@@ -43,6 +43,15 @@ export class AuthHttpRepository implements AuthRepository {
     try {
       const response = await HttpClient().post('/auth/reset-password', resetPasswordDTO)
       const data = response.data as ResetPasswordResponseDTO
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+  async logout(): Promise<LogoutResponseDTO | null> {
+    try {
+      const response = await HttpClient().post('/auth/logout')
+      const data = response.data as LogoutResponseDTO
       return data
     } catch (error) {
       throw error

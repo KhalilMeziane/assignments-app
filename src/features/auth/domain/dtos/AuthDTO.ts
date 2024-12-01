@@ -46,3 +46,7 @@ export interface ResetPasswordDTO {
 export interface ResetPasswordResponseDTO {
   message: string;
 }
+
+export interface LogoutResponseDTO {
+  message: string
+}

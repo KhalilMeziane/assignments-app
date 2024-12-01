@@ -1,4 +1,4 @@
-import { LoginDTO, LoginResponseDTO, RegisterDTO, RegisterResponseDTO, RequestOtpDTO, RequestOtpResponseDTO, VerifyOtpDTO, VerifyOtpResponseDTO, ResetPasswordDTO, ResetPasswordResponseDTO } from "../dtos/AuthDTO";
+import { LoginDTO, LoginResponseDTO, RegisterDTO, RegisterResponseDTO, RequestOtpDTO, RequestOtpResponseDTO, VerifyOtpDTO, VerifyOtpResponseDTO, ResetPasswordDTO, ResetPasswordResponseDTO, LogoutResponseDTO } from "../dtos/AuthDTO";
 
 export interface AuthRepository {
   login(loginDTO: LoginDTO): Promise<LoginResponseDTO | null>;
@@ -6,4 +6,5 @@ export interface AuthRepository {
   requestOtp(requestOtpDTO: RequestOtpDTO): Promise<RequestOtpResponseDTO | null>;
   verifyOtp(verifyOtpDTO: VerifyOtpDTO): Promise<VerifyOtpResponseDTO | null>;
   resetPassword(resetPasswordDTO: ResetPasswordDTO): Promise<ResetPasswordResponseDTO | null>;
+  logout(): Promise<LogoutResponseDTO | null>;
 }
