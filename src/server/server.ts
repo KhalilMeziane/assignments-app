@@ -1,6 +1,6 @@
 import { Assignment, STATUS } from "@/features/assignment/domain/models/Assignment";
 import { User } from "@/features/auth/domain/models/Auth";
-import { createServer, Factory, Model, Registry, Response, Server } from "miragejs";
+import { createServer, Factory, Model, Response } from "miragejs";
 import { ModelDefinition } from "miragejs/-types";
 
 const UserModel: ModelDefinition<User> = Model.extend({});
@@ -164,8 +164,6 @@ export const makeServer = ({ environment = "development" } = {}) => {
         const search = (request.queryParams.search || "") as string
         const status = (request.queryParams.status || "") as string
 
-        console.log("status: ", status)
-
         const assignments = schema.db.assignments
           .filter(assignment => (
             (!search || new RegExp(search, 'i').test(assignment.title)) &&
@@ -199,8 +197,44 @@ export const makeServer = ({ environment = "development" } = {}) => {
         }
       });
 
+      this.post('/assignments', (schema, request) => {
+        let attrs = JSON.parse(request.requestBody);
+        attrs.createdAt = new Date().toISOString()
+        attrs.updatedAt = new Date().toISOString();
+        return (schema as any).assignments.create({ ...attrs, status: STATUS.PENDING });
+      });
+
+      this.delete('/assignments/:id', (schema, request) => {
+        const id = request.params.id;
+        console.log("typeof", typeof schema)
+        const assignment = (schema as any).assignments.find(id);
+
+        if (assignment) {
+          assignment.destroy();
+          return { message: 'Assignment deleted successfully' };
+        } else {
+          return new Response(404, {}, { error: 'Assignment not found' });
+        }
+      });
+
+      this.put('/assignments/:id', (schema, request) => {
+        const id = request.params.id;
+        const attrs = JSON.parse(request.requestBody);
+        const assignment = (schema as any).assignments.find(id);
+
+        if (assignment) {
+          assignment.update({
+            ...attrs,
+            updatedAt: new Date().toISOString(),
+          });
+          return assignment;
+        } else {
+          return new Response(404, {}, { error: 'Assignment not found' });
+        }
+      });
+
     },
-  }) as Server<Registry<{ user: typeof UserModel }, {}>>
+  })
 
   return serverInstances
 }

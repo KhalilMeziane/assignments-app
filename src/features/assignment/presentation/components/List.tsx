@@ -16,8 +16,6 @@ import {
 } from "nuqs"
 
 import { limitWhiteList, sortOrder } from "@/lib/constants"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -26,9 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import EmptyState from "@/components/EmptyState"
 import ErrorBlock from "@/components/ErrorBlock"
 import Loading from "@/components/Loading"
 import { Modal } from "@/components/Modal"
+import StatusBadge from "@/components/StatusBadge"
 
 import { PaginationDTO } from "../../domain/dtos/AssignmentDTO"
 import { Assignment, STATUS } from "../../domain/models/Assignment"
@@ -63,14 +63,19 @@ export default function List() {
   const { data, isLoading, isError, error } = useGetAssignments(queryParams)
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5 min-h-[80vh]">
       {!isLoading && !data && isError ? <ErrorBlock error={error} /> : null}
       {!isError && !data && isLoading ? <Loading /> : null}
       {!isLoading && !isError && data ? (
         <>
-          {data.data.assignments.map((assignment) => (
-            <Item key={assignment.id} assignment={assignment} />
-          ))}
+          <div className="flex-grow">
+            {data.data.assignments.length === 0 ? <EmptyState /> : null}
+            {data.data.assignments.length > 0
+              ? data.data.assignments.map((assignment) => (
+                  <Item key={assignment.id} assignment={assignment} />
+                ))
+              : null}
+          </div>
           <Pagination pagination={data.data.pagination} />
         </>
       ) : null}
@@ -95,7 +100,7 @@ const Item = ({ assignment }: { assignment: Assignment }) => {
               </Button>
             }
             render={({ onClose }) => {
-              return <DeleteForm onClose={onClose} />
+              return <DeleteForm onClose={onClose} assignment={assignment} />
             }}
           />
           <Modal
@@ -106,7 +111,7 @@ const Item = ({ assignment }: { assignment: Assignment }) => {
               </Button>
             }
             render={({ onClose }) => {
-              return <EditForm onClose={onClose} />
+              return <EditForm onClose={onClose} assignment={assignment} />
             }}
           />
           <Modal
@@ -117,7 +122,7 @@ const Item = ({ assignment }: { assignment: Assignment }) => {
               </Button>
             }
             render={({ onClose }) => {
-              return <View onClose={onClose} />
+              return <View onClose={onClose} assignment={assignment} />
             }}
           />
         </div>
@@ -152,7 +157,7 @@ const Pagination = ({ pagination }: { pagination: PaginationDTO }) => {
         <Button
           size="icon"
           onClick={handelPageNext}
-          disabled={page === pagination.totalPages}
+          disabled={page === pagination.totalPages || pagination.total === 0}
         >
           <ChevronRight />
         </Button>
@@ -187,20 +192,5 @@ const Limit = () => {
         <SelectItem value="30">30</SelectItem>
       </SelectContent>
     </Select>
-  )
-}
-
-const statusColors: Record<STATUS, { text: string; border: string }> = {
-  [STATUS.ALL]: { text: "text-yellow-500", border: "border-yellow-500" },
-  [STATUS.PENDING]: { text: "text-yellow-500", border: "border-yellow-500" },
-  [STATUS.IN_PROGRESS]: { text: "text-blue-500", border: "border-blue-500" },
-  [STATUS.COMPLETED]: { text: "text-green-500", border: "border-green-500" },
-}
-const StatusBadge = ({ status }: { status: STATUS }) => {
-  const { text, border } = statusColors[status]
-  return (
-    <Badge variant="outline" className={cn(`capitalize ${text} ${border}`)}>
-      {status}
-    </Badge>
   )
 }

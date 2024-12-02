@@ -1,4 +1,7 @@
-import { STATUS } from "@/features/assignment/domain/models/Assignment"
+import {
+  Assignment,
+  STATUS,
+} from "@/features/assignment/domain/models/Assignment"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
@@ -13,20 +16,31 @@ import {
   UpdateAssignmentValues,
 } from "../../validators"
 
-export default function EditForm({ onClose }: { onClose: () => void }) {
+export default function EditForm({
+  onClose,
+  assignment,
+}: {
+  onClose: () => void
+  assignment: Assignment
+}) {
   const { mutateAsync, isPending, isError, error } = useUpdateAssignment()
 
   const form = useForm<UpdateAssignmentValues>({
     resolver: zodResolver(UpdateAssignmentSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      status: STATUS.PENDING,
+      title: assignment.title,
+      description: assignment.description,
+      status: assignment.status as
+        | STATUS.PENDING
+        | STATUS.IN_PROGRESS
+        | STATUS.COMPLETED
+        | undefined,
     },
   })
 
   const handelSubmit = async (values: UpdateAssignmentValues) => {
-    await mutateAsync({ ...values, id: "id" })
+    await mutateAsync({ ...values, id: assignment.id })
+    onClose()
   }
 
   return (
@@ -51,7 +65,7 @@ export default function EditForm({ onClose }: { onClose: () => void }) {
             },
             {
               label: "In Progress",
-              value: "in_progress",
+              value: "progress",
             },
             {
               label: "Completed",

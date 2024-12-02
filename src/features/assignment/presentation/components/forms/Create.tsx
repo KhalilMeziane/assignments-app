@@ -25,6 +25,7 @@ export default function CreateForm({ onClose }: { onClose: () => void }) {
 
   const handelSubmit = async (values: CreateAssignmentValues) => {
     await mutateAsync(values)
+    onClose()
   }
 
   return (

@@ -5,7 +5,7 @@ import { AssignmentRepository } from "../../domain/repositories/AssignmentReposi
 export class AssignmentHttpRepository implements AssignmentRepository {
   async create(createDTO: CreateDTO): Promise<CreateResponseDTO | null> {
     try {
-      const response = await HttpClient().post('/assignment', createDTO)
+      const response = await HttpClient().post('/assignments', createDTO)
       const data = response.data as CreateResponseDTO
       return data
     } catch (error) {
@@ -15,7 +15,8 @@ export class AssignmentHttpRepository implements AssignmentRepository {
 
   async update(updateDTO: UpdateDTO): Promise<UpdateResponseDTO | null> {
     try {
-      const response = await HttpClient().post('/assignment/${id}', updateDTO)
+      const { id, ...body } = updateDTO
+      const response = await HttpClient().put(`/assignments/${id}`, body)
       const data = response.data as UpdateResponseDTO
       return data
     } catch (error) {
@@ -25,7 +26,7 @@ export class AssignmentHttpRepository implements AssignmentRepository {
 
   async delete(id: string): Promise<DeleteResponseDTO | null> {
     try {
-      const response = await HttpClient().delete(`/assignment/${id}`)
+      const response = await HttpClient().delete(`/assignments/${id}`)
       const data = response.data as DeleteResponseDTO
       return data
     } catch (error) {

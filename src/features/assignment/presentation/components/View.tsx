@@ -4,28 +4,31 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import StatusBadge from "@/components/StatusBadge"
 
-export default function View({ onClose }: { onClose: () => void }) {
+import { Assignment } from "../../domain/models/Assignment"
+
+export default function View({
+  onClose,
+  assignment,
+}: {
+  onClose: () => void
+  assignment: Assignment
+}) {
   return (
     <div>
-      <h2 className="font-semibold text-xl">Complete Project Proposal</h2>
+      <h2 className="font-semibold text-xl">{assignment.title}</h2>
       <div className="mb-2">
         <h3 className="font-semibold text-lg">Description:</h3>
-        <p className="text-sm text-gray-700 mb-1">
-          Draft and finalize the project proposal for the new client.
-        </p>
+        <p className="text-sm text-gray-700 mb-1">{assignment.description}</p>
       </div>
 
       <div className="flex justify-between mb-2">
         <p className="font-semibold text-lg mb-1">Status:</p>
-        <Badge
-          variant="outline"
-          className={cn("text-green-500 border-green-500")}
-        >
-          Status
-        </Badge>
+        <StatusBadge status={assignment.status} />
       </div>
 
+      {/* #todo */}
       <div className="mb-2">
         <h3 className="font-semibold text-lg mb-1">Assignee:</h3>
         <div className="flex items-center gap-2">
@@ -41,11 +44,11 @@ export default function View({ onClose }: { onClose: () => void }) {
         <h3 className="font-semibold text-lg mb-1">Timestamps:</h3>
         <p className="text-base flex items-center gap-1 text-gray-700">
           <Calendar className="size-4" />
-          <span> Created: 2023-06-15</span>
+          <span> Created: {assignment.createdAt.slice(0, 10)}</span>
         </p>
         <p className="text-base flex items-center gap-1 text-gray-700">
           <Calendar className="size-4" />
-          <span>Updated: 2023-06-15</span>
+          <span>Updated: {assignment.updatedAt.slice(0, 10)}</span>
         </p>
       </div>
 
