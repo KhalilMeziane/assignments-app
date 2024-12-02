@@ -4,11 +4,17 @@ import { clearAuth } from "@/features/auth/application/authSlice"
 import { useLogout } from "@/features/auth/presentation/hooks"
 import Cookies from "js-cookie"
 import { ArrowDownNarrowWide, ArrowUpNarrowWide, LogOut } from "lucide-react"
-import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs"
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+} from "nuqs"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { useDebouncedCallback } from "use-debounce"
 
+import { sortOrder, statusWhiteList } from "@/lib/constants"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -62,10 +68,13 @@ const Search = () => {
     "search",
     parseAsString.withDefault("")
   )
+  const [_page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
 
   const debounced = useDebouncedCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setSearch(event.target.value),
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(event.target.value)
+      setPage(1)
+    },
     300
   )
 
@@ -84,14 +93,15 @@ const Search = () => {
 }
 
 const StatusFilter = () => {
-  const statusWhiteList = ["all", "pending", "progress", "completed"] as const
   const [status, setStatus] = useQueryState(
     "status",
     parseAsStringLiteral(statusWhiteList).withDefault("all")
   )
+  const [_page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
 
   const handelStatus = (value: (typeof statusWhiteList)[number]) => {
     setStatus(value)
+    setPage(1)
   }
 
   return (
@@ -110,7 +120,6 @@ const StatusFilter = () => {
 }
 
 const Sort = () => {
-  const sortOrder = ["asc", "desc"] as const
   const [sort, setSort] = useQueryState(
     "sort",
     parseAsStringLiteral(sortOrder).withDefault("desc")

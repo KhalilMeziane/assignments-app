@@ -1,22 +1,45 @@
+import { Assignment, STATUS } from "@/features/assignment/domain/models/Assignment";
 import { User } from "@/features/auth/domain/models/Auth";
-import { createServer, Model, Registry, Response, Server } from "miragejs";
+import { createServer, Factory, Model, Registry, Response, Server } from "miragejs";
 import { ModelDefinition } from "miragejs/-types";
 
 const UserModel: ModelDefinition<User> = Model.extend({});
+const AssignmentModel: ModelDefinition<Assignment> = Model.extend({});
 
 export const makeServer = ({ environment = "development" } = {}) => {
   const serverInstances = createServer({
     environment,
     models: {
       user: UserModel,
+      assignment: AssignmentModel
     },
 
+    factories: {
+      assignment: Factory.extend({
+        title(i) {
+          return `Assignment ${i}`
+        },
+        description(i) {
+          return `This is a assignment ${i + 1}`
+        },
+        status() {
+          return ['pending', 'progress', 'completed'][Math.floor(Math.random() * 3)]
+        },
+        createdAt() {
+          return new Date().toISOString()
+        },
+        updatedAt() {
+          return new Date().toISOString()
+        }
+      })
+    },
     seeds(server) {
       server.create("user", {
         name: 'khalil',
         email: "khalil@gmail.com",
         password: "khalil123",
       });
+      server.createList('assignment', 25)
     },
 
     routes() {
@@ -132,6 +155,48 @@ export const makeServer = ({ environment = "development" } = {}) => {
         return {
           message: "Password updated successfully",
         };
+      });
+
+      this.get("/assignments", (schema, request) => {
+        const page = parseInt(request.queryParams.page as string) || 1
+        const pageSize = parseInt(request.queryParams.limit as string) || 10
+        const sort = request.queryParams.sort || "desc"
+        const search = (request.queryParams.search || "") as string
+        const status = (request.queryParams.status || "") as string
+
+        console.log("status: ", status)
+
+        const assignments = schema.db.assignments
+          .filter(assignment => (
+            (!search || new RegExp(search, 'i').test(assignment.title)) &&
+            (!status || assignment.status === status)
+          ))
+          .sort((a, b) => {
+            if (sort === 'asc') {
+              return a.title.localeCompare(b.title);
+            } else {
+              return b.title.localeCompare(a.title);
+            }
+          })
+
+        const startIndex = (page - 1) * pageSize
+        const endIndex = startIndex + pageSize
+        const totalAssignments = assignments.length
+
+        const totalPages = Math.ceil(totalAssignments / pageSize)
+
+        return {
+          message: 'Fetch assignments successful',
+          data: {
+            assignments: assignments.slice(startIndex, endIndex),
+            pagination: {
+              page,
+              pageSize,
+              total: totalAssignments,
+              totalPages
+            }
+          }
+        }
       });
 
     },

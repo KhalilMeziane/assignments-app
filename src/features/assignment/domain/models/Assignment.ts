@@ -3,10 +3,13 @@ export interface Assignment {
   title: string
   description: string
   status: STATUS
+  createdAt: string
+  updatedAt: string
 }
 
 export enum STATUS {
+  ALL = '',
   PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
+  IN_PROGRESS = 'progress',
   COMPLETED = 'completed'
 }

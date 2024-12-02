@@ -35,7 +35,7 @@ export class AssignmentHttpRepository implements AssignmentRepository {
 
   async getAll(getAllParams?: GetAllParamsDTO): Promise<GetAllResponseDTO | null> {
     try {
-      const response = await HttpClient().get('/assignment', {
+      const response = await HttpClient().get('/assignments', {
         params: getAllParams
       })
       const data = response.data as GetAllResponseDTO

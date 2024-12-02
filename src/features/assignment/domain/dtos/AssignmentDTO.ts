@@ -32,12 +32,20 @@ export interface GetAllParamsDTO {
   limit?: number;
   search?: string;
   order?: 'asc' | 'desc'
+  status?: STATUS
 }
 
 export interface GetAllResponseDTO {
   message: string,
   data: {
     assignments: Assignment[]
-    pagination: {}
+    pagination: PaginationDTO
   }
+}
+
+export interface PaginationDTO {
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
 }
