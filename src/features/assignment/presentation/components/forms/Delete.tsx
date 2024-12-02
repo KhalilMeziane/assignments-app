@@ -1,5 +1,6 @@
 import { Assignment } from "@/features/assignment/domain/models/Assignment"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -30,8 +31,13 @@ export default function DeleteForm({
   })
 
   const handelSubmit = async () => {
-    await mutateAsync(assignment.id)
-    onClose()
+    const queryClient = useQueryClient()
+    await mutateAsync(assignment.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["get-assignments"] })
+        onClose()
+      },
+    })
   }
 
   return (

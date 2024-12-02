@@ -3,6 +3,7 @@ import {
   STATUS,
 } from "@/features/assignment/domain/models/Assignment"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -23,6 +24,7 @@ export default function EditForm({
   onClose: () => void
   assignment: Assignment
 }) {
+  const queryClient = useQueryClient()
   const { mutateAsync, isPending, isError, error } = useUpdateAssignment()
 
   const form = useForm<UpdateAssignmentValues>({
@@ -39,8 +41,15 @@ export default function EditForm({
   })
 
   const handelSubmit = async (values: UpdateAssignmentValues) => {
-    await mutateAsync({ ...values, id: assignment.id })
-    onClose()
+    await mutateAsync(
+      { ...values, id: assignment.id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["get-assignments"] })
+          onClose()
+        },
+      }
+    )
   }
 
   return (

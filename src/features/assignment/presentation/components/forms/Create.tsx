@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -13,6 +14,7 @@ import {
 } from "../../validators"
 
 export default function CreateForm({ onClose }: { onClose: () => void }) {
+  const queryClient = useQueryClient()
   const { mutateAsync, isPending, isError, error } = useCreateAssignment()
 
   const form = useForm<CreateAssignmentValues>({
@@ -24,8 +26,12 @@ export default function CreateForm({ onClose }: { onClose: () => void }) {
   })
 
   const handelSubmit = async (values: CreateAssignmentValues) => {
-    await mutateAsync(values)
-    onClose()
+    await mutateAsync(values, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["get-assignments"] })
+        onClose()
+      },
+    })
   }
 
   return (
