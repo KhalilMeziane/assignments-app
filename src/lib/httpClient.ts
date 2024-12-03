@@ -1,5 +1,6 @@
 import axios, { Axios } from 'axios';
 import { BadRequestError, ConflictError, ForbiddenError, NotFoundError, UnAuthorizedError, UnhandledError } from './networkErrors';
+import Cookies from 'js-cookie';
 let axiosInstance: Axios;
 
 export const HttpClient = () => {
@@ -7,6 +8,13 @@ export const HttpClient = () => {
   axiosInstance = axios.create({
     baseURL: 'http://localhost:5173/api',
   });
+
+  axiosInstance.interceptors.request.use((config) => {
+    if (Cookies.get("accessToken")) {
+      config.headers["x-auth-id"] = Cookies.get("accessToken");
+    }
+    return config
+  })
 
   axiosInstance.interceptors.response.use(response => response, error => {
     if (error.response) {

@@ -1,8 +1,7 @@
+import placeholder from "@/assets/user-placeholder.jpg"
 import { Calendar } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import StatusBadge from "@/components/StatusBadge"
 
@@ -33,10 +32,13 @@ export default function View({
         <h3 className="font-semibold text-lg mb-1">Assignee:</h3>
         <div className="flex items-center gap-2">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={placeholder} />
+            <AvatarFallback>{assignment.author.name.slice()}</AvatarFallback>
           </Avatar>
-          <p>khalil</p>
+          <div>
+            <p className="font-medium text-sm">{assignment.author.name}</p>
+            <p className="text-xs">{assignment.author.email}</p>
+          </div>
         </div>
       </div>
 

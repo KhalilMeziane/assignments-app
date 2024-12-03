@@ -1,10 +1,14 @@
 import { Assignment, STATUS } from "@/features/assignment/domain/models/Assignment";
 import { User } from "@/features/auth/domain/models/Auth";
-import { createServer, Factory, Model, Response } from "miragejs";
+import { belongsTo, createServer, Factory, hasMany, Model, Response } from "miragejs";
 import { ModelDefinition } from "miragejs/-types";
 
-const UserModel: ModelDefinition<User> = Model.extend({});
-const AssignmentModel: ModelDefinition<Assignment> = Model.extend({});
+const UserModel: ModelDefinition<User> = Model.extend({
+  assignments: hasMany('assignment')
+});
+const AssignmentModel: ModelDefinition<Assignment> = Model.extend({
+  author: belongsTo('user')
+});
 
 export const makeServer = ({ environment = "development" } = {}) => {
   const serverInstances = createServer({
@@ -34,12 +38,12 @@ export const makeServer = ({ environment = "development" } = {}) => {
       })
     },
     seeds(server) {
-      server.create("user", {
+      const user = server.create("user", {
         name: 'khalil',
         email: "khalil@gmail.com",
         password: "khalil123",
       });
-      server.createList('assignment', 25)
+      server.createList('assignment', 25, { author: user })
     },
 
     routes() {
@@ -175,7 +179,13 @@ export const makeServer = ({ environment = "development" } = {}) => {
             } else {
               return b.title.localeCompare(a.title);
             }
-          })
+          }).map(assignment => {
+            const author = schema.db.users.find(assignment.authorId);
+            return {
+              ...assignment,
+              author: author ? { id: author.id, name: author.name, email: author.email } : null
+            };
+          });
 
         const startIndex = (page - 1) * pageSize
         const endIndex = startIndex + pageSize
@@ -198,10 +208,11 @@ export const makeServer = ({ environment = "development" } = {}) => {
       });
 
       this.post('/assignments', (schema, request) => {
+        const userId = request.requestHeaders['x-auth-id'];
         let attrs = JSON.parse(request.requestBody);
         attrs.createdAt = new Date().toISOString()
         attrs.updatedAt = new Date().toISOString();
-        return (schema as any).assignments.create({ ...attrs, status: STATUS.PENDING });
+        return (schema as any).assignments.create({ ...attrs, status: STATUS.PENDING, authorId: userId });
       });
 
       this.delete('/assignments/:id', (schema, request) => {

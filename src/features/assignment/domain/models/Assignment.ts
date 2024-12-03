@@ -1,3 +1,5 @@
+import { User } from "@/features/auth/domain/models/Auth"
+
 export interface Assignment {
   id: string
   title: string
@@ -5,6 +7,7 @@ export interface Assignment {
   status: STATUS
   createdAt: string
   updatedAt: string
+  author: User
 }
 
 export enum STATUS {
