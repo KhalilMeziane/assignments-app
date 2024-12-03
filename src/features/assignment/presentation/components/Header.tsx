@@ -45,8 +45,8 @@ export default function Header() {
         <UserMenu />
       </div>
 
-      <div className="mt-2 flex justify-between">
-        <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap justify-between py-0.5">
+        <div className="flex gap-1 flex-wrap lg:justify-between">
           <Search />
           <StatusFilter />
           <Sort />
@@ -85,7 +85,7 @@ const Search = () => {
   return (
     <Input
       placeholder="Search"
-      className="w-64 bg-white"
+      className="w-full lg:w-64 bg-white"
       onChange={handelSearch}
       defaultValue={search}
     />

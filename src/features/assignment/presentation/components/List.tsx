@@ -86,12 +86,12 @@ export default function List() {
 const Item = ({ assignment }: { assignment: Assignment }) => {
   return (
     <div className="bg-white p-3 rounded-md border-2 border-gray-100">
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
+      <div className="flex lg:items-center md:justify-between flex-col md:flex-row ">
+        <div className="flex gap-2 py-1">
           <h2 className="font-semibold text-xl">{assignment.title}</h2>
           <StatusBadge status={assignment.status} />
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 py-1">
           <Modal
             title="Delete Assignment"
             CButton={
@@ -146,8 +146,8 @@ const Pagination = ({ pagination }: { pagination: PaginationDTO }) => {
   }
 
   return (
-    <div className="flex justify-between">
-      <div className="flex items-center gap-2 py-1">
+    <div className="flex justify-between flex-col md:flex-row pb-4">
+      <div className="flex items-center justify-center md:justify-start gap-2 py-1">
         <Button size="icon" onClick={handelPagePrev} disabled={page === 1}>
           <ChevronLeft />
         </Button>
@@ -183,7 +183,7 @@ const Limit = () => {
       onValueChange={(val: string) => handelStatus(Number(val) as 10 | 20 | 30)}
       defaultValue={limit.toString()}
     >
-      <SelectTrigger className="w-[180px] bg-white">
+      <SelectTrigger className="w-full md:w-[180px] bg-white">
         <SelectValue placeholder="Select Limit" />
       </SelectTrigger>
       <SelectContent>
