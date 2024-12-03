@@ -21,6 +21,7 @@ export default function DeleteForm({
   onClose: () => void
   assignment: Assignment
 }) {
+  const queryClient = useQueryClient()
   const { mutateAsync, isPending, isError, error } = useDeleteAssignment()
 
   const form = useForm<ConfirmDeleteAssignmentValues>({
@@ -31,7 +32,6 @@ export default function DeleteForm({
   })
 
   const handelSubmit = async () => {
-    const queryClient = useQueryClient()
     await mutateAsync(assignment.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["get-assignments"] })
